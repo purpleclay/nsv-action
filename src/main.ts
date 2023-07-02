@@ -45,6 +45,8 @@ async function run(): Promise<void> {
 
     await core.group('Running NSV', async () => {
       const nextSemVer = await nsv(download.path, nextOnly ? 'next' : 'tag')
+      // prevent the confusing ::endgroup:: log message
+      core.info('')
       core.setOutput('nsv', nextSemVer)
     })
   } catch (error) {
@@ -54,15 +56,17 @@ async function run(): Promise<void> {
 }
 
 async function nsv(path: string, cmd: string): Promise<string> {
-  return await exec.getExecOutput(`${path} ${cmd}`, [], {
-    ignoreReturnCode: true,
-  }).then(res => {
-    if (res.stderr.length > 0 && res.exitCode != 0) {
-      throw new Error(res.stderr);
-    }
+  return await exec
+    .getExecOutput(`${path} ${cmd}`, [], {
+      ignoreReturnCode: true
+    })
+    .then(res => {
+      if (res.stderr.length > 0 && res.exitCode != 0) {
+        throw new Error(res.stderr)
+      }
 
-    return res.stdout.trim()
-  })
+      return res.stdout.trim()
+    })
 }
 
 run()
