@@ -49,11 +49,11 @@ export async function downloadNsv(
   const ver = result.tag_name.replace(/^v/, '')
 
   if (osPlatform === 'linux') {
-    filename = `nsv-${ver}_x86_64_linux.tar.gz`
+    filename = `nsv_${ver}_linux_x86_64.tar.gz`
   } else if (osPlatform == 'darwin') {
-    filename = `nsv-${ver}_x86_64_darwin.tar.gz`
+    filename = `nsv_${ver}_darwin_x86_64.tar.gz`
   } else {
-    filename = `nsv-${ver}_x86_64_windows.zip`
+    filename = `nsv_${ver}_windows_x86_64.zip`
     binary = 'nsv.exe'
   }
 
