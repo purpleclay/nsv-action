@@ -20,7 +20,7 @@
 
 import * as core from '@actions/core'
 import * as exec from '@actions/exec'
-import {Download, downloadGpgImport, downloadNsv} from './github'
+import { Download, downloadGpgImport, downloadNsv } from './github'
 
 async function run(): Promise<void> {
   try {
@@ -28,7 +28,7 @@ async function run(): Promise<void> {
     const version = core.getInput('version')
     const nextOnly = core.getBooleanInput('next-only')
 
-    if (process.env.GPG_PRIVATE_KEY && process.env.GPG_PRIVATE_KEY !== '') {
+    if (process.env.GPG_PRIVATE_KEY && process.env.GPG_PRIVATE_KEY != '') {
       await core.group('Importing GPG Key', async () => {
         const download = await downloadGpgImport(token)
         core.info(`Downloaded gpg-import: ${download.version}`)
@@ -54,15 +54,15 @@ async function run(): Promise<void> {
 }
 
 async function nsv(path: string, cmd: string): Promise<string> {
-  let output = ''
-  await exec.exec(`${path} ${cmd}`, [], {
-    listeners: {
-      stdout(buffer) {
-        output += buffer
-      }
+  return await exec.getExecOutput(`${path} ${cmd}`, [], {
+    ignoreReturnCode: true,
+    silent: true,
+  }).then(res => {
+    if (res.stderr.length > 0 && res.exitCode != 0) {
+      throw new Error(res.stderr);
     }
+    return res.stdout.trim()
   })
-  return output
 }
 
 run()
