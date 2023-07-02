@@ -20,7 +20,7 @@
 
 import * as core from '@actions/core'
 import * as exec from '@actions/exec'
-import {downloadGpgImport, downloadNsv} from './github'
+import {Download, downloadGpgImport, downloadNsv} from './github'
 
 async function run(): Promise<void> {
   try {
@@ -28,19 +28,23 @@ async function run(): Promise<void> {
     const version = core.getInput('version')
     const nextOnly = core.getBooleanInput('next-only')
 
-    let path = ''
-    await core.group('Downloading tooling', async () => {
-      core.info('nsv: ${version}')
-      path = await downloadNsv(token, version)
+    if (process.env.GPG_PRIVATE_KEY && process.env.GPG_PRIVATE_KEY !== '') {
+      await core.group('Importing GPG Key', async () => {
+        const download = await downloadGpgImport(token)
+        core.info(`Downloaded gpg-import: ${download.version}`)
 
-      if (process.env.GPG_PRIVATE_KEY && process.env.GPG_PRIVATE_KEY !== '') {
-        core.info('gpg-import: latest')
-        await downloadGpgImport(token)
-      }
+        await exec.exec(`${download.path}`)
+      })
+    }
+
+    let download: Download
+    await core.group('Downloading NSV', async () => {
+      download = await downloadNsv(token, version)
+      core.info(`nsv: ${download.version}`)
     })
 
     await core.group('Running NSV', async () => {
-      const nextSemVer = await nsv(path, nextOnly ? 'next' : 'tag')
+      const nextSemVer = await nsv(download.path, nextOnly ? 'next' : 'tag')
       core.setOutput('nsv', nextSemVer)
     })
   } catch (error) {

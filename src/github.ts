@@ -19,21 +19,26 @@
 // SOFTWARE.
 
 import * as core from '@actions/core'
-import { getOctokit } from '@actions/github'
+import {getOctokit} from '@actions/github'
 import * as cache from '@actions/tool-cache'
 import * as os from 'os'
 import * as path from 'path'
 
 const osPlatform = os.platform() as string
 
-export interface GithubTag {
+export interface Download {
+  path: string
+  version: string
+}
+
+interface GithubTag {
   tag_name: string
 }
 
 export async function downloadNsv(
   token: string,
   version: string
-): Promise<string> {
+): Promise<Download> {
   const result = await queryVersion(token, 'nsv', version)
   if (!result) {
     throw new Error(`Failed to download latest version of gpg-import`)
@@ -53,10 +58,10 @@ export async function downloadNsv(
   }
 
   const dir = await download('nsv', result.tag_name, filename)
-  return path.join(dir, binary)
+  return {path: path.join(dir, binary), version: result.tag_name}
 }
 
-export async function downloadGpgImport(token: string): Promise<string> {
+export async function downloadGpgImport(token: string): Promise<Download> {
   const result = await queryVersion(token, 'gpg-import', 'latest')
   if (!result) {
     throw new Error(`Failed to download latest version of gpg-import`)
@@ -75,7 +80,7 @@ export async function downloadGpgImport(token: string): Promise<string> {
   }
 
   const dir = await download('gpg-import', result.tag_name, filename)
-  return path.join(dir, binary)
+  return {path: path.join(dir, binary), version: result.tag_name}
 }
 
 async function download(
@@ -102,14 +107,14 @@ const queryVersion = async (
   const octokit = getOctokit(token)
 
   if (version === 'latest') {
-    const { data: release } = await octokit.rest.repos.getLatestRelease({
+    const {data: release} = await octokit.rest.repos.getLatestRelease({
       owner: 'purpleclay',
       repo: repo
     })
     return release
   }
 
-  const { data: release } = await octokit.rest.repos.getReleaseByTag({
+  const {data: release} = await octokit.rest.repos.getReleaseByTag({
     owner: 'purpleclay',
     repo: repo,
     tag: version
