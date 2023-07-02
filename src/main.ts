@@ -45,7 +45,7 @@ async function run(): Promise<void> {
 
     await core.group('Running NSV', async () => {
       const nextSemVer = await nsv(download.path, nextOnly ? 'next' : 'tag')
-      core.info(`setting output nsv to ${nextSemVer}`)
+      core.info(nextSemVer)
       core.setOutput('nsv', nextSemVer)
     })
   } catch (error) {
@@ -57,6 +57,7 @@ async function run(): Promise<void> {
 async function nsv(path: string, cmd: string): Promise<string> {
   return await exec.getExecOutput(`${path} ${cmd}`, [], {
     ignoreReturnCode: true,
+    silent: true,
   }).then(res => {
     if (res.stderr.length > 0 && res.exitCode != 0) {
       throw new Error(res.stderr);
