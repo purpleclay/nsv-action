@@ -45,7 +45,6 @@ async function run(): Promise<void> {
 
     await core.group('Running NSV', async () => {
       const nextSemVer = await nsv(download.path, nextOnly ? 'next' : 'tag')
-      core.info(nextSemVer)
       core.setOutput('nsv', nextSemVer)
     })
   } catch (error) {
