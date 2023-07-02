@@ -57,11 +57,11 @@ async function run(): Promise<void> {
 async function nsv(path: string, cmd: string): Promise<string> {
   return await exec.getExecOutput(`${path} ${cmd}`, [], {
     ignoreReturnCode: true,
-    silent: true,
   }).then(res => {
     if (res.stderr.length > 0 && res.exitCode != 0) {
       throw new Error(res.stderr);
     }
+
     return res.stdout.trim()
   })
 }
