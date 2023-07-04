@@ -104,7 +104,7 @@ const queryVersion = async (
   repo: string,
   version: string
 ): Promise<GithubTag | null> => {
-  const octokit = getOctokit(token)
+  const octokit = getOctokit(process.env.GITHUB_TOKEN as string)
 
   if (version === 'latest') {
     const {data: release} = await octokit.rest.repos.getLatestRelease({
