@@ -1,4 +1,4 @@
-name: 'NSV'
+name: 'NSV (Next Semantic Version)'
 description: 'Semantic versioning without any config'
 author: 'purpleclay'
 branding:
