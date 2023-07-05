@@ -1,0 +1,25 @@
+name: "NSV Action"
+description: "Semantic versioning without any config"
+author: "purpleclay"
+branding:
+  color: "purple"
+  icon: "tag"
+inputs:
+  token:
+    description: "A token for performing authenticated requests to the GitHub API"
+    default: ${{ github.token }}
+    required: false
+  version:
+    description: "The version of NSV"
+    default: latest
+    required: false
+  next-only:
+    description: "If the next semantic version should just be calculated. Repository will not be tagged"
+    default: "false"
+    required: false
+outputs:
+  nsv:
+    description: "The calculated next semantic version"
+runs:
+  using: "node16"
+  main: "dist/index.js"
