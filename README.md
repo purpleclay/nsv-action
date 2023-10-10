@@ -28,6 +28,8 @@ You can also define CI/CD variables within your GitLab project to configure the 
 - `GPG_PASSPHRASE` is an optional passphrase if the GPG key is password protected.
 - `GPG_TRUST_LEVEL` is an owner trust level assigned to the imported GPG key.
 
+> Ensure all environment variables are wrapped within double quotes to prevent any unintentional side effects
+
 ## Using the action
 
 ### Tag the repository
@@ -54,10 +56,14 @@ jobs:
       - name: NSV
         uses: purpleclay/nsv-action@v1
         env:
-          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+          GPG_PRIVATE_KEY: "${{ secrets.GPG_PRIVATE_KEY }}"
 ```
 
-> If you don't wish to use a GPG key to sign the tags, you must set the committer details within the git config yourself. No user impersonation is currently supported.
+#### User impersonation
+
+When tagging your repository, `nsv` will identify the person associated with the commit that triggered the release and pass this to git through the `user.name` and `user.email` config settings.
+
+You can override this behavior by importing a GPG key, manually setting those git config settings, or using the reserved git environment variables `GIT_COMMITTER_NAME` and `GIT_COMMITTER_EMAIL`; see the [documentation](https://docs.purpleclay.dev/nsv/tag-version/#committer-impersonation) for further details.
 
 ### Trigger another workflow
 
@@ -77,13 +83,13 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          token: ${{ secrets.TOKEN }}
+          token: "${{ secrets.TOKEN }}"
 
       - name: NSV
         uses: purpleclay/nsv-action@v1
         env:
-          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
-          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          GPG_PRIVATE_KEY: "${{ secrets.GPG_PRIVATE_KEY }}"
+          GPG_PASSPHRASE: "${{ secrets.GPG_PASSPHRASE }}"
 ```
 
 ### Capturing the next tag
