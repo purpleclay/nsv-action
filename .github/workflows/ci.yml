@@ -1,4 +1,4 @@
-# Copyright (c) 2023 Purple Clay
+# Copyright (c) 2023 - 2024 Purple Clay
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -24,19 +24,19 @@ on:
     branches:
       - main
     paths:
-      - "src/**"
+      - 'src/**'
       - package.json
   pull_request:
     branches:
       - main
     paths:
-      - "src/**"
+      - 'src/**'
       - package.json
 jobs:
   ci:
     strategy:
-       matrix:
-         os: [ubuntu-latest, macos-latest, windows-latest]
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout

@@ -1,6 +1,6 @@
 {
   "name": "nsv-action",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Semantic versioning without any config",
   "main": "lib/main.js",
   "scripts": {
@@ -34,14 +34,15 @@
     "@actions/tool-cache": "^2.0.1"
   },
   "devDependencies": {
-    "@types/node": "^20.3.2",
-    "@types/tmp": "^0.2.3",
-    "@typescript-eslint/eslint-plugin": "^5.60.1",
-    "@typescript-eslint/parser": "^5.60.1",
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.11.25",
+    "@types/tmp": "^0.2.6",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0",
     "@vercel/ncc": "^0.36.1",
     "eslint": "^8.43.0",
     "prettier": "^2.8.8",
-    "tmp": "^0.2.1",
+    "tmp": "^0.2.3",
     "ts-node": "^10.9.1",
     "typescript": "^5.1.6"
   }

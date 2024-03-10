@@ -1,4 +1,4 @@
-// Copyright (c) 2023 Purple Clay
+// Copyright (c) 2023 - 2024 Purple Clay
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,7 +19,7 @@
 // SOFTWARE.
 
 import * as core from '@actions/core'
-import { getOctokit } from '@actions/github'
+import {getOctokit} from '@actions/github'
 import * as cache from '@actions/tool-cache'
 import * as os from 'os'
 import * as path from 'path'
@@ -58,7 +58,7 @@ export async function downloadNsv(
   }
 
   const dir = await download('nsv', result.tag_name, filename)
-  return { path: path.join(dir, binary), version: result.tag_name }
+  return {path: path.join(dir, binary), version: result.tag_name}
 }
 
 export async function downloadGpgImport(token: string): Promise<Download> {
@@ -80,7 +80,7 @@ export async function downloadGpgImport(token: string): Promise<Download> {
   }
 
   const dir = await download('gpg-import', result.tag_name, filename)
-  return { path: path.join(dir, binary), version: result.tag_name }
+  return {path: path.join(dir, binary), version: result.tag_name}
 }
 
 async function download(
@@ -107,14 +107,14 @@ const queryVersion = async (
   const octokit = getOctokit(token)
 
   if (version === 'latest') {
-    const { data: release } = await octokit.rest.repos.getLatestRelease({
+    const {data: release} = await octokit.rest.repos.getLatestRelease({
       owner: 'purpleclay',
       repo: repo
     })
     return release
   }
 
-  const { data: release } = await octokit.rest.repos.getReleaseByTag({
+  const {data: release} = await octokit.rest.repos.getReleaseByTag({
     owner: 'purpleclay',
     repo: repo,
     tag: version

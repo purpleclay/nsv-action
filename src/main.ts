@@ -1,4 +1,4 @@
-// Copyright (c) 2023 Purple Clay
+// Copyright (c) 2023 - 2024 Purple Clay
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,13 +20,14 @@
 
 import * as core from '@actions/core'
 import * as exec from '@actions/exec'
-import { Download, downloadGpgImport, downloadNsv } from './github'
+import {Download, downloadGpgImport, downloadNsv} from './github'
 
 async function run(): Promise<void> {
   try {
     const token = core.getInput('token')
     const version = core.getInput('version')
     const nextOnly = core.getBooleanInput('next-only')
+    const projects = core.getInput('projects')
 
     if (process.env.GPG_PRIVATE_KEY && process.env.GPG_PRIVATE_KEY != '') {
       await core.group('Importing GPG Key', async () => {
@@ -44,7 +45,11 @@ async function run(): Promise<void> {
     })
 
     await core.group('Running NSV', async () => {
-      const nextSemVer = await nsv(download.path, nextOnly ? 'next' : 'tag')
+      const nextSemVer = await nsv(
+        download.path,
+        nextOnly ? 'next' : 'tag',
+        projects.replace(',', ' ')
+      )
       // prevent the confusing ::endgroup:: log message
       core.info('')
       core.setOutput('nsv', nextSemVer)
@@ -55,9 +60,9 @@ async function run(): Promise<void> {
   }
 }
 
-async function nsv(path: string, cmd: string): Promise<string> {
+async function nsv(path: string, cmd: string, opts: string): Promise<string> {
   return await exec
-    .getExecOutput(`${path} ${cmd}`, [], {
+    .getExecOutput(`${path} ${cmd} ${opts}`, [], {
       ignoreReturnCode: true
     })
     .then(res => {
