@@ -17,6 +17,9 @@ inputs:
     description: 'If the next semantic version should just be calculated. Repository will not be tagged'
     default: 'false'
     required: false
+  projects:
+    description: 'A comma-separated list of paths to monorepo projects'
+    required: false
 outputs:
   nsv:
     description: 'The calculated next semantic version'

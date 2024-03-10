@@ -11,12 +11,13 @@ Check out the latest [documentation](https://docs.purpleclay.dev/nsv/).
 | `token`     | no       | string  | A token for performing authenticated requests to the GitHub API                                          |
 | `version`   | no       | string  | The version of NSV to download (default: `latest`)                                                       |
 | `next-only` | no       | boolean | If the next semantic version should just be calculated. Repository will not be tagged (default: `false`) |
+| `projects`  | no       | string  | A comma-separated list of paths to monorepo projects                                                     |
 
 ## Outputs
 
-| Name  | Type   | Description                          |
-| ----- | ------ | ------------------------------------ |
-| `nsv` | string | The calculated next semantic version |
+| Name  | Type   | Description                                                                                                     |
+| ----- | ------ | --------------------------------------------------------------------------------------------------------------- |
+| `nsv` | string | The calculated next semantic version. Can be a comma-separated list if multiple monorepo projects were provided |
 
 ## Environment variables
 
@@ -56,7 +57,7 @@ jobs:
       - name: NSV
         uses: purpleclay/nsv-action@v1
         env:
-          GPG_PRIVATE_KEY: "${{ secrets.GPG_PRIVATE_KEY }}"
+          GPG_PRIVATE_KEY: '${{ secrets.GPG_PRIVATE_KEY }}'
 ```
 
 #### User impersonation
@@ -64,6 +65,37 @@ jobs:
 When tagging your repository, `nsv` will identify the person associated with the commit that triggered the release and pass this to git through the `user.name` and `user.email` config settings.
 
 You can override this behavior by importing a GPG key, manually setting those git config settings, or using the reserved git environment variables `GIT_COMMITTER_NAME` and `GIT_COMMITTER_EMAIL`; see the [documentation](https://docs.purpleclay.dev/nsv/tag-version/#committer-impersonation) for further details.
+
+### Tag a monorepo project
+
+If working with a monorepo project, the project to tag can be specified through the `projects` input:
+
+```yaml
+name: ci
+on:
+  push:
+    branches:
+      - main
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: NSV
+        uses: purpleclay/nsv-action@v1
+        with:
+          projects: src/project
+        env:
+          GPG_PRIVATE_KEY: '${{ secrets.GPG_PRIVATE_KEY }}'
+```
+
+Multiple monorepo projects can be tagged by providing a comma-separated list to the `projects` input.
 
 ### Trigger another workflow
 
@@ -83,13 +115,13 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          token: "${{ secrets.TOKEN }}"
+          token: '${{ secrets.TOKEN }}'
 
       - name: NSV
         uses: purpleclay/nsv-action@v1
         env:
-          GPG_PRIVATE_KEY: "${{ secrets.GPG_PRIVATE_KEY }}"
-          GPG_PASSPHRASE: "${{ secrets.GPG_PASSPHRASE }}"
+          GPG_PRIVATE_KEY: '${{ secrets.GPG_PRIVATE_KEY }}'
+          GPG_PASSPHRASE: '${{ secrets.GPG_PASSPHRASE }}'
 ```
 
 ### Capturing the next tag
