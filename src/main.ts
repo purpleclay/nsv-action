@@ -48,7 +48,7 @@ async function run(): Promise<void> {
       const nextSemVer = await nsv(
         download.path,
         nextOnly ? 'next' : 'tag',
-        projects.replace(',', ' ')
+        projects.replace(/\s?,\s?/gi, ' ')
       )
       // prevent the confusing ::endgroup:: log message
       core.info('')
